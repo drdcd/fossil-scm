@@ -783,13 +783,13 @@ void merge_cmd(void){
     int idm = db_column_int(&q, 0);
     const char *zName;
     char *zFullName;
+    zName = db_column_text(&q, 1);
+    zFullName = mprintf("%s%s", g.zLocalRoot, zName);
     db_multi_exec(
       "INSERT INTO vfile(vid,chnged,deleted,rid,mrid,isexe,islink,pathname)"
       "  SELECT %d,%d,0,rid,mrid,isexe,islink,pathname FROM vfile WHERE id=%d",
       vid, integrateFlag?5:3, idm
     );
-    zName = db_column_text(&q, 1);
-    zFullName = mprintf("%s%s", g.zLocalRoot, zName);
     if( file_wd_isfile_or_link(zFullName)
         && !db_exists("SELECT 1 FROM fv WHERE fn=%Q", zName) ){
       fossil_print("ADDED %s (overwrites an unmanaged file)\n", zName);
